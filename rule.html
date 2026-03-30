@@ -10,7 +10,7 @@
         :root {
             --bg-color: #ffffff;
             --header-bg: #000000;
-            --card-grey: #e5e7eb; /* Slightly lighter, cleaner grey */
+            --card-grey: #e5e7eb;
         }
         
         body {
@@ -69,7 +69,6 @@
             cursor: pointer;
             z-index: 10;
             transition: z-index 0s step-start;
-            /* Premium subtle drop shadow around the whole physical card */
             box-shadow: 0 10px 20px rgba(0,0,0,0.06);
             background: #ffffff;
         }
@@ -99,13 +98,12 @@
             flex-direction: column;
             justify-content: center;
             padding: 0 0.5rem 0 0.75rem;
-            /* Replaced ugly borders with a sleek inner shadow and esports accent line */
             box-shadow: 0 -4px 10px rgba(0,0,0,0.04);
             border-left: 4px solid #000000; 
         }
         .card-info h2 {
             font-size: 0.75rem;
-            font-weight: 900; /* Black/Heavy weight for title */
+            font-weight: 900;
             color: #000;
             margin: 0 0 2px 0;
             line-height: 1.1;
@@ -130,19 +128,17 @@
             height: 85%;
             z-index: 2;
             overflow: visible;
-            /* Prevents the image from bleeding out horizontally */
             display: flex;
             justify-content: center; 
         }
         
         .char-img {
-            width: 95%; /* Slightly pulled in so it doesn't touch extreme edges */
+            width: 95%;
             height: 100%;
             object-fit: contain;
             object-position: bottom center;
             filter: drop-shadow(0px 8px 10px rgba(0,0,0,0.4));
             
-            /* FIXED ANIMATION: Smooth, strictly controlled upward slide (no bouncing too high) */
             will-change: transform, filter;
             animation: cleanSwipeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) backwards;
             transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), 
@@ -163,7 +159,7 @@
         /* Little Logo & Loader Container */
         .little-logo-container {
             position: absolute;
-            right: 4%; /* Pulled slightly in from the exact edge for better framing */
+            right: 4%;
             bottom: 20%;
             transform: translateY(50%);
             width: 32px;
@@ -314,7 +310,6 @@
             if (isNavigating) return;
             isNavigating = true;
 
-            // Haptic Feedback for premium feel
             if (navigator.vibrate) navigator.vibrate(40); 
 
             cardElement.classList.add('active');
@@ -323,6 +318,18 @@
                 window.location.href = redirectUrl;
             }, 850); 
         }
+
+        // --- BFCache Fix: Reset state when user presses "Back" button ---
+        window.addEventListener('pageshow', function(event) {
+            // Unlocks navigation lock
+            isNavigating = false;
+            
+            // Reverts all cards back to their normal visual state
+            const cards = document.querySelectorAll('.card');
+            cards.forEach(card => {
+                card.classList.remove('active');
+            });
+        });
     </script>
 </body>
 </html>
