@@ -20,6 +20,7 @@
             color: var(--text-color);
             margin: 0; padding: 0;
             width: 100%; 
+            /* SCROLLING ENABLED */
             overflow-x: hidden; 
             overflow-y: auto; 
             -webkit-touch-callout: none;
@@ -61,10 +62,10 @@
             min-height: calc(100vh - 60px);
         }
 
-        /* === COMMAND MODULE (Top Section) === */
+        /* === COMMAND MODULE (Top Section - Solid White) === */
         .command-module {
             background-color: #ffffff;
-            border-bottom: 4px solid #000000; 
+            border-bottom: 4px solid #000000;
             padding: 30px 15px;
             text-align: center;
             position: relative; z-index: 20;
@@ -78,70 +79,27 @@
             margin: 5px 0 20px 0; text-transform: uppercase; letter-spacing: 2px;
         }
         
-        /* Point Header Box */
         .ph-box {
             background: #000000; color: #ffffff;
             padding: 12px 20px; border-radius: 4px;
             box-shadow: 6px 6px 0px var(--card-grey);
             display: inline-block;
-            opacity: 0; transform: translateY(10px);
-            transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
-        .ph-box.active { opacity: 1; transform: translateY(0); }
         .ph-box h3 {
             font-size: 1.1rem; font-weight: 900; text-transform: uppercase;
             letter-spacing: 1px; margin: 0;
+            transition: opacity 0.3s ease;
         }
 
-        /* === ARENA (Bottom Section) === */
+        /* === ARENA (Bottom Section - Image Background) === */
         .arena {
             position: relative; width: 100%;
             flex-grow: 1; 
-            background-image: url('https://dl.dir.freefiremobile.com/common/web_event/official2.ff.garena.all/20229/d81fa4eb3f566d3a0d37975b8102d0b8.jpg');
+            background-image: url('https://dl.dir.freefiremobile.com/common/web_event/official2.ff.garena.all/202510/704e9a06ea98cbb26cedc03b8ce96375.jpg');
             background-size: cover;
             background-position: center top;
-            padding: 30px 0 60px 0; 
+            padding: 40px 0 60px 0; 
             z-index: 10;
-        }
-
-        /* === HINT TEXT === */
-        .hint-text {
-            position: absolute; top: 15%; left: 8%;
-            font-weight: 900; font-size: 0.85rem; text-transform: uppercase;
-            width: 45%; text-align: left; background: #fff; padding: 12px;
-            border: 2px solid #000; box-shadow: 4px 4px 0px #e5e7eb;
-            opacity: 1; transition: opacity 0.4s ease; z-index: 5;
-        }
-        .hint-text.hidden { opacity: 0; pointer-events: none; }
-        .hint-text span {
-            display: block; margin-top: 5px; font-size: 1.5rem;
-            animation: bounceRight 1s infinite alternate;
-        }
-        @keyframes bounceRight {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(8px); }
-        }
-
-        /* === CHARACTER PNG (Absolute for animation) === */
-        .character {
-            position: absolute; 
-            bottom: 0; 
-            left: 50%; 
-            transform: translateX(-50%) scale(1); /* Big and Centered */
-            height: 85%; width: auto; max-width: 95%;
-            object-fit: contain; 
-            transform-origin: bottom center;
-            transition: all 0.8s cubic-bezier(0.25, 1, 0.2, 1);
-            z-index: 20; /* Above the card */
-            filter: drop-shadow(0px 10px 15px rgba(0,0,0,0.5));
-            pointer-events: none;
-        }
-        
-        .character.shifted {
-            /* Moves strictly to the bottom right corner of the rule card */
-            left: 82%; 
-            transform: translateX(-100%) scale(0.40); 
-            transform-origin: bottom right;
         }
 
         /* === DYNAMIC FIXED TIMELINE === */
@@ -175,43 +133,58 @@
             box-shadow: 0 4px 10px rgba(0,0,0,0.3);
         }
 
-        /* === GREY RULE CARD === */
-        .rule-card {
-            width: 78%; 
+        /* === CARD & CHARACTER CONTAINER === */
+        .card-container {
+            position: relative;
+            width: 78%;
             margin-left: 5%;
+        }
+
+        /* GREY RULE CARD (Permanently Visible) */
+        .rule-card {
+            width: 100%; 
             background-color: var(--card-grey);
             border: 3px solid #000;
             box-shadow: 8px 8px 0px #000000; 
             border-radius: 6px;
-            /* 38% Right padding ensures text never touches the character */
-            padding: 20px 38% 20px 15px; 
-            min-height: 250px;
-            opacity: 0; transform: translateX(-20px);
-            transition: all 0.6s cubic-bezier(0.25, 1, 0.2, 1);
+            /* Heavy Right Padding physically prevents text from going behind PNG */
+            padding: 20px 115px 20px 15px;
             position: relative;
             overflow: hidden; 
-            z-index: 15;
-        }
-        .rule-card.active {
-            opacity: 1; transform: translateX(0);
+            min-height: 220px;
+            display: flex; flex-direction: column; justify-content: center;
         }
 
         .rule-load-bar {
             position: absolute; top: 0; left: 0;
             width: 0%; height: 4px; background-color: #000000;
+            transition: width 0.25s linear;
         }
 
-        /* Text Configuration */
         #active-rule-text {
-            font-size: 1rem; font-weight: 700; line-height: 1.4; color: #000;
+            font-size: 1.05rem; font-weight: 700; line-height: 1.4; color: #000;
+            margin: 0;
         }
-        
+
+        /* CHARACTER PNG LOGIC (Permanently in Corner) */
+        .character {
+            position: absolute;
+            left: 100%; 
+            transform: translateX(-100%);
+            bottom: -3px; /* Sits perfectly on bottom border */
+            height: 230px; 
+            object-fit: contain; transform-origin: bottom right;
+            z-index: 15;
+            pointer-events: none;
+            filter: drop-shadow(-4px 4px 6px rgba(0,0,0,0.4));
+        }
+
+        /* === DISQUALIFICATION BLOCK === */
         .disq-block {
             margin-top: 15px; padding: 12px;
             background: rgba(0, 0, 0, 0.05);
             border-left: 4px solid #000;
-            font-weight: 800; font-size: 0.85rem;
-            color: #000;
+            font-weight: 800; font-size: 0.9rem; color: #000;
         }
         .disq-title {
             text-transform: uppercase; display: block; margin-bottom: 5px;
@@ -226,14 +199,13 @@
             display: flex; align-items: center; justify-content: center;
             gap: 10px; padding: 10px;
             background-color: #000; color: #fff;
-            text-decoration: none; font-weight: 900; font-size: 0.85rem;
-            text-transform: uppercase;
-            border-radius: 4px; border: 2px solid #000;
+            text-decoration: none; font-weight: 900; font-size: 0.9rem;
+            text-transform: uppercase; border-radius: 4px; border: 2px solid #000;
             box-shadow: 0 4px 6px rgba(0,0,0,0.3);
             transition: transform 0.2s ease;
         }
         .social-btn:active { transform: scale(0.95); }
-        .social-btn svg { width: 18px; height: 18px; fill: #fff; }
+        .social-btn svg { width: 20px; height: 20px; fill: #fff; }
 
         /* Typewriter Cursor */
         .typing-cursor {
@@ -265,36 +237,36 @@
             <h2>Don't miss any of it</h2>
             
             <div id="point-header-box" class="ph-box">
-                <h3 id="point-header">AWAITING SYSTEM...</h3>
+                <!-- Directly loaded with Point 1 Header -->
+                <h3 id="point-header">Follow Official Accounts</h3>
             </div>
         </div>
 
         <!-- ARENA -->
         <div class="arena">
 
-            <!-- Hint Text -->
-            <div id="hint-text" class="hint-text">
-                Tap on point to read rules
-                <span>&#8594;</span>
-            </div>
-
-            <!-- Absolute Character (Starts Center, shifts to corner) -->
-            <img id="character" class="character" src="https://dl.dir.freefiremobile.com/common/web_event/official2.ff.garena.all/20229/a00504b94adddc82ae3ff2bfc53b568b.png" alt="Character" draggable="false">
-
-            <!-- Fixed Timeline -->
+            <!-- Fixed Numbered Timeline -->
             <div class="timeline">
                 <div class="timeline-line">
+                    <!-- Progress defaults to 0% for Point 1 -->
                     <div class="timeline-progress" id="timeline-progress"></div>
                 </div>
-                <div class="point" id="pt-1" onclick="showRule(1)">1</div>
+                <!-- Point 1 is selected by default -->
+                <div class="point selected" id="pt-1" onclick="showRule(1)">1</div>
                 <div class="point" id="pt-2" onclick="showRule(2)">2</div>
                 <div class="point" id="pt-3" onclick="showRule(3)">3</div>
             </div>
 
-            <!-- Grey Rule Card (Character sits over empty right padding) -->
-            <div id="rule-card" class="rule-card">
-                <div id="rule-load-bar" class="rule-load-bar"></div>
-                <div id="active-rule-text"></div>
+            <!-- Card & Character Relative Wrapper -->
+            <div class="card-container">
+                <!-- Character permanently in corner -->
+                <img id="character" class="character" src="https://dl.dir.freefiremobile.com/common/web_event/official2.ff.garena.all/20229/a00504b94adddc82ae3ff2bfc53b568b.png" alt="Character" draggable="false">
+
+                <!-- Grey Rule Card -->
+                <div id="rule-card" class="rule-card">
+                    <div id="rule-load-bar" class="rule-load-bar"></div>
+                    <div id="active-rule-text"></div>
+                </div>
             </div>
 
         </div>
@@ -310,7 +282,7 @@
             if ((event.ctrlKey || event.metaKey) && (event.key === 'U' || event.key === 'u')) event.preventDefault();
         });
 
-        /* === RULES DATA === */
+        /* === RULES DATA (Hinglish Grammer Corrected) === */
         const rulesData = {
             1: {
                 header: "Follow Official Accounts",
@@ -327,11 +299,11 @@
                        </div>`
             },
             2: {
-                header: "Latest 5 Reel",
-                text: `Meri LATEST 5 REELS par Like, Comment on each reel and 1 reel need to be shared to story is compulsory. 
+                header: "Latest 5 Reels",
+                text: `Meri LATEST 5 REELS par Like aur Comment karna zaroori hai, aur kisi 1 reel ko apni story par share karna compulsory hai. 
                        <div class="disq-block">
                            <span class="disq-title">DISQUALIFICATION:</span>
-                           Agar tum jeet gaye, to tumhara activity check kiya jayega. Dhyan rahe, Tournament room banne KE BAAD KIYE GAYE LIKE AUR COMMENT VALID NAHI HONGE. Agar tumhari activity match winning ke baad hui, to direct DISQUALIFICATION milegi.
+                           Agar tum jeet gaye, toh tumhari activity check ki jayegi. Dhyan rahe, Tournament room banne KE BAAD KIYE GAYE LIKE AUR COMMENT VALID NAHI HONGE. Agar tumhari activity match jeetne ke baad ki hui, toh direct DISQUALIFICATION milega.
                        </div>`
             },
             3: {
@@ -341,14 +313,9 @@
         };
 
         /* === INTERACTION LOGIC === */
-        let hasInteracted = false;
         let typingTimeout = null;
         
-        const character = document.getElementById('character');
-        const hintText = document.getElementById('hint-text');
-        const pointHeaderBox = document.getElementById('point-header-box');
         const pointHeader = document.getElementById('point-header');
-        const ruleCard = document.getElementById('rule-card');
         const ruleTextDisplay = document.getElementById('active-rule-text');
         const timelineProgress = document.getElementById('timeline-progress');
         const ruleLoadBar = document.getElementById('rule-load-bar');
@@ -384,43 +351,46 @@
         }
 
         function showRule(pointId) {
-            // First Interaction Sequence
-            if (!hasInteracted) {
-                hasInteracted = true;
-                hintText.classList.add('hidden');
-                character.classList.add('shifted');
-                pointHeaderBox.classList.add('active');
-                ruleCard.classList.add('active');
-            }
-
-            // Update Timeline
+            
+            // 1. Timeline Highlights
             document.querySelectorAll('.point').forEach((pt, index) => {
                 pt.classList.remove('selected');
                 if (index + 1 <= pointId) pt.classList.add('selected');
             });
-
             const progressHeights = { 1: '0%', 2: '50%', 3: '100%' };
             timelineProgress.style.height = progressHeights[pointId];
 
-            // SEAMLESS TEXT SWAP (Card stays visible)
-            clearTimeout(typingTimeout); 
-            ruleLoadBar.style.transition = 'none'; // Snap bar back
-            ruleLoadBar.style.width = '0%'; 
-
-            // Update header instantly
-            pointHeader.innerHTML = rulesData[pointId].header;
-            ruleTextDisplay.innerHTML = ""; 
-
-            // Small delay to allow CSS to register the bar reset, then animate
+            // 2. Fade text transition for Header
+            pointHeader.style.opacity = '0';
+            
             setTimeout(() => {
-                ruleLoadBar.style.transition = 'width 0.25s linear';
+                pointHeader.innerHTML = rulesData[pointId].header;
+                pointHeader.style.opacity = '1';
+            }, 200);
+
+            // 3. Reset & Trigger Text Animation
+            clearTimeout(typingTimeout);
+            ruleLoadBar.style.width = '0%'; 
+            ruleTextDisplay.innerHTML = ""; // Instantly clear old text
+            
+            setTimeout(() => {
                 ruleLoadBar.style.width = '100%';
-                
                 setTimeout(() => {
                     typeWriterHTML(ruleTextDisplay, rulesData[pointId].text, 12);
                 }, 250);
             }, 50); 
         }
+
+        // --- INSTANT LOAD POINT 1 ON PAGE OPEN ---
+        window.onload = () => {
+            // Begins typing the text for Point 1 instantly without delays
+            setTimeout(() => {
+                ruleLoadBar.style.width = '100%';
+                setTimeout(() => {
+                    typeWriterHTML(ruleTextDisplay, rulesData[1].text, 12);
+                }, 250);
+            }, 50);
+        };
 
     </script>
 </body>
