@@ -20,7 +20,6 @@
             color: var(--text-color);
             margin: 0; padding: 0;
             width: 100%; 
-            /* SCROLLING ENABLED */
             overflow-x: hidden; 
             overflow-y: auto; 
             -webkit-touch-callout: none;
@@ -62,10 +61,10 @@
             min-height: calc(100vh - 60px);
         }
 
-        /* === COMMAND MODULE (Top Section - Solid White) === */
+        /* === COMMAND MODULE (Top Section) === */
         .command-module {
             background-color: #ffffff;
-            border-bottom: 4px solid #000000; /* Distinct separation line */
+            border-bottom: 4px solid #000000; 
             padding: 30px 15px;
             text-align: center;
             position: relative; z-index: 20;
@@ -94,16 +93,55 @@
             letter-spacing: 1px; margin: 0;
         }
 
-        /* === ARENA (Bottom Section - Image Background) === */
+        /* === ARENA (Bottom Section) === */
         .arena {
             position: relative; width: 100%;
             flex-grow: 1; 
-            /* EXACT IMAGE REQUESTED */
-            background-image: url('https://dl.dir.freefiremobile.com/common/web_event/official2.ff.garena.all/202510/704e9a06ea98cbb26cedc03b8ce96375.jpg');
+            background-image: url('https://dl.dir.freefiremobile.com/common/web_event/official2.ff.garena.all/20229/d81fa4eb3f566d3a0d37975b8102d0b8.jpg');
             background-size: cover;
             background-position: center top;
             padding: 30px 0 60px 0; 
             z-index: 10;
+        }
+
+        /* === HINT TEXT === */
+        .hint-text {
+            position: absolute; top: 15%; left: 8%;
+            font-weight: 900; font-size: 0.85rem; text-transform: uppercase;
+            width: 45%; text-align: left; background: #fff; padding: 12px;
+            border: 2px solid #000; box-shadow: 4px 4px 0px #e5e7eb;
+            opacity: 1; transition: opacity 0.4s ease; z-index: 5;
+        }
+        .hint-text.hidden { opacity: 0; pointer-events: none; }
+        .hint-text span {
+            display: block; margin-top: 5px; font-size: 1.5rem;
+            animation: bounceRight 1s infinite alternate;
+        }
+        @keyframes bounceRight {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(8px); }
+        }
+
+        /* === CHARACTER PNG (Absolute for animation) === */
+        .character {
+            position: absolute; 
+            bottom: 0; 
+            left: 50%; 
+            transform: translateX(-50%) scale(1); /* Big and Centered */
+            height: 85%; width: auto; max-width: 95%;
+            object-fit: contain; 
+            transform-origin: bottom center;
+            transition: all 0.8s cubic-bezier(0.25, 1, 0.2, 1);
+            z-index: 20; /* Above the card */
+            filter: drop-shadow(0px 10px 15px rgba(0,0,0,0.5));
+            pointer-events: none;
+        }
+        
+        .character.shifted {
+            /* Moves strictly to the bottom right corner of the rule card */
+            left: 82%; 
+            transform: translateX(-100%) scale(0.40); 
+            transform-origin: bottom right;
         }
 
         /* === DYNAMIC FIXED TIMELINE === */
@@ -137,7 +175,7 @@
             box-shadow: 0 4px 10px rgba(0,0,0,0.3);
         }
 
-        /* === GREY RULE CARD W/ CHARACTER === */
+        /* === GREY RULE CARD === */
         .rule-card {
             width: 78%; 
             margin-left: 5%;
@@ -145,13 +183,14 @@
             border: 3px solid #000;
             box-shadow: 8px 8px 0px #000000; 
             border-radius: 6px;
-            display: flex; flex-direction: row;
-            align-items: flex-end; 
-            padding-top: 20px;
+            /* 38% Right padding ensures text never touches the character */
+            padding: 20px 38% 20px 15px; 
+            min-height: 250px;
             opacity: 0; transform: translateX(-20px);
             transition: all 0.6s cubic-bezier(0.25, 1, 0.2, 1);
             position: relative;
             overflow: hidden; 
+            z-index: 15;
         }
         .rule-card.active {
             opacity: 1; transform: translateX(0);
@@ -160,37 +199,18 @@
         .rule-load-bar {
             position: absolute; top: 0; left: 0;
             width: 0%; height: 4px; background-color: #000000;
-            transition: width 0.25s linear;
         }
 
-        .text-col {
-            width: 65%; 
-            padding: 0 10px 20px 15px;
-            display: flex; flex-direction: column; justify-content: center;
-        }
+        /* Text Configuration */
         #active-rule-text {
-            font-size: 1.05rem; font-weight: 700; line-height: 1.4; color: #000;
-        }
-
-        .char-col {
-            width: 35%; 
-            display: flex; justify-content: flex-end; align-items: flex-end;
-        }
-        .char-col img {
-            width: 100%; height: auto;
-            max-height: 250px; 
-            object-fit: contain; object-position: bottom right;
-            filter: drop-shadow(-4px 4px 6px rgba(0,0,0,0.25));
-            margin-bottom: -2px; 
-            margin-right: 5px;
+            font-size: 1rem; font-weight: 700; line-height: 1.4; color: #000;
         }
         
-        /* Disqualification Block */
         .disq-block {
             margin-top: 15px; padding: 12px;
             background: rgba(0, 0, 0, 0.05);
             border-left: 4px solid #000;
-            font-weight: 800; font-size: 0.9rem;
+            font-weight: 800; font-size: 0.85rem;
             color: #000;
         }
         .disq-title {
@@ -200,27 +220,20 @@
 
         /* === SOCIAL BUTTONS === */
         .social-buttons {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            margin-top: 15px;
+            display: flex; flex-direction: column; gap: 10px; margin-top: 15px;
         }
         .social-btn {
             display: flex; align-items: center; justify-content: center;
             gap: 10px; padding: 10px;
             background-color: #000; color: #fff;
-            text-decoration: none; font-weight: 900; font-size: 0.9rem;
+            text-decoration: none; font-weight: 900; font-size: 0.85rem;
             text-transform: uppercase;
             border-radius: 4px; border: 2px solid #000;
             box-shadow: 0 4px 6px rgba(0,0,0,0.3);
             transition: transform 0.2s ease;
         }
-        .social-btn:active {
-            transform: scale(0.95);
-        }
-        .social-btn svg {
-            width: 20px; height: 20px; fill: #fff;
-        }
+        .social-btn:active { transform: scale(0.95); }
+        .social-btn svg { width: 18px; height: 18px; fill: #fff; }
 
         /* Typewriter Cursor */
         .typing-cursor {
@@ -256,10 +269,19 @@
             </div>
         </div>
 
-        <!-- ARENA (Image Background) -->
+        <!-- ARENA -->
         <div class="arena">
 
-            <!-- Fixed Numbered Timeline -->
+            <!-- Hint Text -->
+            <div id="hint-text" class="hint-text">
+                Tap on point to read rules
+                <span>&#8594;</span>
+            </div>
+
+            <!-- Absolute Character (Starts Center, shifts to corner) -->
+            <img id="character" class="character" src="https://dl.dir.freefiremobile.com/common/web_event/official2.ff.garena.all/20229/a00504b94adddc82ae3ff2bfc53b568b.png" alt="Character" draggable="false">
+
+            <!-- Fixed Timeline -->
             <div class="timeline">
                 <div class="timeline-line">
                     <div class="timeline-progress" id="timeline-progress"></div>
@@ -269,19 +291,10 @@
                 <div class="point" id="pt-3" onclick="showRule(3)">3</div>
             </div>
 
-            <!-- Grey Rule Card w/ Character -->
+            <!-- Grey Rule Card (Character sits over empty right padding) -->
             <div id="rule-card" class="rule-card">
                 <div id="rule-load-bar" class="rule-load-bar"></div>
-                
-                <!-- Text Area -->
-                <div class="text-col">
-                    <div id="active-rule-text"></div>
-                </div>
-
-                <!-- Character Area -->
-                <div class="char-col">
-                    <img src="https://dl.dir.freefiremobile.com/common/web_event/official2.ff.garena.all/20229/a00504b94adddc82ae3ff2bfc53b568b.png" alt="Character" draggable="false">
-                </div>
+                <div id="active-rule-text"></div>
             </div>
 
         </div>
@@ -328,8 +341,11 @@
         };
 
         /* === INTERACTION LOGIC === */
+        let hasInteracted = false;
         let typingTimeout = null;
         
+        const character = document.getElementById('character');
+        const hintText = document.getElementById('hint-text');
         const pointHeaderBox = document.getElementById('point-header-box');
         const pointHeader = document.getElementById('point-header');
         const ruleCard = document.getElementById('rule-card');
@@ -368,7 +384,14 @@
         }
 
         function showRule(pointId) {
-            if (navigator.vibrate) navigator.vibrate(40);
+            // First Interaction Sequence
+            if (!hasInteracted) {
+                hasInteracted = true;
+                hintText.classList.add('hidden');
+                character.classList.add('shifted');
+                pointHeaderBox.classList.add('active');
+                ruleCard.classList.add('active');
+            }
 
             // Update Timeline
             document.querySelectorAll('.point').forEach((pt, index) => {
@@ -379,38 +402,25 @@
             const progressHeights = { 1: '0%', 2: '50%', 3: '100%' };
             timelineProgress.style.height = progressHeights[pointId];
 
-            // Hide Card before updating
-            pointHeaderBox.classList.remove('active');
-            ruleCard.classList.remove('active');
-            ruleLoadBar.style.width = '0%'; 
+            // SEAMLESS TEXT SWAP (Card stays visible)
             clearTimeout(typingTimeout); 
+            ruleLoadBar.style.transition = 'none'; // Snap bar back
+            ruleLoadBar.style.width = '0%'; 
 
+            // Update header instantly
+            pointHeader.innerHTML = rulesData[pointId].header;
+            ruleTextDisplay.innerHTML = ""; 
+
+            // Small delay to allow CSS to register the bar reset, then animate
             setTimeout(() => {
-                // Update Text Content
-                pointHeader.innerHTML = rulesData[pointId].header;
-                ruleTextDisplay.innerHTML = ""; 
+                ruleLoadBar.style.transition = 'width 0.25s linear';
+                ruleLoadBar.style.width = '100%';
                 
-                // Show Card
-                pointHeaderBox.classList.add('active');
-                ruleCard.classList.add('active');
-
-                // Trigger Load & Type
                 setTimeout(() => {
-                    ruleLoadBar.style.width = '100%';
-                    setTimeout(() => {
-                        typeWriterHTML(ruleTextDisplay, rulesData[pointId].text, 12);
-                    }, 250);
-                }, 100);
-
-            }, 400); 
+                    typeWriterHTML(ruleTextDisplay, rulesData[pointId].text, 12);
+                }, 250);
+            }, 50); 
         }
-
-        // Auto-start Point 1
-        window.onload = () => {
-            setTimeout(() => {
-                showRule(1);
-            }, 500);
-        };
 
     </script>
 </body>
