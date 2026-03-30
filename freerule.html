@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Free Tournament Rules</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* === RESTRICTIONS & BASE STYLES === */
+        :root {
+            --bg-color: #ffffff;
+            --text-color: #000000;
+            --header-bg: #000000;
+            --timeline-base: #d1d5db;
+            --card-grey: #e5e7eb; 
+        }
+        
+        body, html {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0; padding: 0;
+            width: 100%; 
+            /* SCROLLING ENABLED */
+            overflow-x: hidden; 
+            overflow-y: auto; 
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
+            touch-action: pan-y; 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        #landscape-blocker {
+            display: none;
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: #000; color: #fff; z-index: 99999;
+            align-items: center; justify-content: center;
+            text-align: center; font-size: 1.5rem; font-weight: bold; padding: 20px;
+        }
+        @media screen and (orientation: landscape) {
+            #landscape-blocker { display: flex; }
+            #app-content { display: none; }
+        }
+
+        /* === HEADER === */
+        .header {
+            background-color: var(--header-bg);
+            height: 60px;
+            display: flex; justify-content: center; align-items: center;
+            position: fixed; top: 0; left: 0; width: 100%;
+            z-index: 100;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+        .header a { height: 100%; display: block; }
+        .header img { height: 100%; width: auto; object-fit: contain; }
+
+        /* === MAIN SCROLLABLE LAYOUT === */
+        .content-wrapper {
+            margin-top: 60px; 
+            width: 100%; 
+            display: flex; flex-direction: column;
+            min-height: calc(100vh - 60px);
+        }
+
+        /* === COMMAND MODULE (Top Section - Solid White) === */
+        .command-module {
+            background-color: #ffffff;
+            border-bottom: 4px solid #000000; /* Distinct separation line */
+            padding: 30px 15px;
+            text-align: center;
+            position: relative; z-index: 20;
+        }
+        .command-module h1 {
+            font-size: 1.5rem; font-weight: 900; text-transform: uppercase;
+            letter-spacing: 0.5px; margin: 0; line-height: 1.2;
+        }
+        .command-module h2 {
+            font-size: 0.75rem; font-weight: 700; color: #555;
+            margin: 5px 0 20px 0; text-transform: uppercase; letter-spacing: 2px;
+        }
+        
+        /* Point Header Box */
+        .ph-box {
+            background: #000000; color: #ffffff;
+            padding: 12px 20px; border-radius: 4px;
+            box-shadow: 6px 6px 0px var(--card-grey);
+            display: inline-block;
+            opacity: 0; transform: translateY(10px);
+            transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .ph-box.active { opacity: 1; transform: translateY(0); }
+        .ph-box h3 {
+            font-size: 1.1rem; font-weight: 900; text-transform: uppercase;
+            letter-spacing: 1px; margin: 0;
+        }
+
+        /* === ARENA (Bottom Section - Image Background) === */
+        .arena {
+            position: relative; width: 100%;
+            flex-grow: 1; 
+            /* EXACT IMAGE REQUESTED */
+            background-image: url('https://dl.dir.freefiremobile.com/common/web_event/official2.ff.garena.all/202510/704e9a06ea98cbb26cedc03b8ce96375.jpg');
+            background-size: cover;
+            background-position: center top;
+            padding: 30px 0 60px 0; 
+            z-index: 10;
+        }
+
+        /* === DYNAMIC FIXED TIMELINE === */
+        .timeline {
+            position: fixed; right: 15px; top: 45%;
+            height: 35vh; width: 35px;
+            display: flex; flex-direction: column;
+            justify-content: space-between; align-items: center;
+            z-index: 50;
+        }
+        .timeline-line {
+            position: absolute; top: 0; bottom: 0; left: 50%;
+            transform: translateX(-50%); width: 4px;
+            background-color: var(--timeline-base); z-index: 1; border-radius: 2px;
+        }
+        .timeline-progress {
+            position: absolute; top: 0; left: 0; width: 100%;
+            background-color: #000; height: 0%; 
+            transition: height 0.6s cubic-bezier(0.25, 1, 0.2, 1); border-radius: 2px;
+        }
+        .point {
+            width: 32px; height: 32px; background-color: #fff; color: #000;
+            border: 3px solid var(--timeline-base); border-radius: 50%;
+            display: flex; justify-content: center; align-items: center;
+            font-size: 1rem; font-weight: 900; z-index: 2; cursor: pointer;
+            transition: all 0.4s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .point.selected {
+            background-color: #000; color: #fff; border-color: #000; transform: scale(1.15);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+
+        /* === GREY RULE CARD W/ CHARACTER === */
+        .rule-card {
+            width: 78%; 
+            margin-left: 5%;
+            background-color: var(--card-grey);
+            border: 3px solid #000;
+            box-shadow: 8px 8px 0px #000000; 
+            border-radius: 6px;
+            display: flex; flex-direction: row;
+            align-items: flex-end; 
+            padding-top: 20px;
+            opacity: 0; transform: translateX(-20px);
+            transition: all 0.6s cubic-bezier(0.25, 1, 0.2, 1);
+            position: relative;
+            overflow: hidden; 
+        }
+        .rule-card.active {
+            opacity: 1; transform: translateX(0);
+        }
+
+        .rule-load-bar {
+            position: absolute; top: 0; left: 0;
+            width: 0%; height: 4px; background-color: #000000;
+            transition: width 0.25s linear;
+        }
+
+        .text-col {
+            width: 65%; 
+            padding: 0 10px 20px 15px;
+            display: flex; flex-direction: column; justify-content: center;
+        }
+        #active-rule-text {
+            font-size: 1.05rem; font-weight: 700; line-height: 1.4; color: #000;
+        }
+
+        .char-col {
+            width: 35%; 
+            display: flex; justify-content: flex-end; align-items: flex-end;
+        }
+        .char-col img {
+            width: 100%; height: auto;
+            max-height: 250px; 
+            object-fit: contain; object-position: bottom right;
+            filter: drop-shadow(-4px 4px 6px rgba(0,0,0,0.25));
+            margin-bottom: -2px; 
+            margin-right: 5px;
+        }
+        
+        /* Disqualification Block */
+        .disq-block {
+            margin-top: 15px; padding: 12px;
+            background: rgba(0, 0, 0, 0.05);
+            border-left: 4px solid #000;
+            font-weight: 800; font-size: 0.9rem;
+            color: #000;
+        }
+        .disq-title {
+            text-transform: uppercase; display: block; margin-bottom: 5px;
+            text-decoration: underline; color: #000; font-weight: 900;
+        }
+
+        /* === SOCIAL BUTTONS === */
+        .social-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        .social-btn {
+            display: flex; align-items: center; justify-content: center;
+            gap: 10px; padding: 10px;
+            background-color: #000; color: #fff;
+            text-decoration: none; font-weight: 900; font-size: 0.9rem;
+            text-transform: uppercase;
+            border-radius: 4px; border: 2px solid #000;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            transition: transform 0.2s ease;
+        }
+        .social-btn:active {
+            transform: scale(0.95);
+        }
+        .social-btn svg {
+            width: 20px; height: 20px; fill: #fff;
+        }
+
+        /* Typewriter Cursor */
+        .typing-cursor {
+            display: inline-block; width: 8px; height: 1em;
+            background-color: #000; vertical-align: text-bottom; margin-left: 3px;
+            animation: blink 0.8s step-end infinite;
+        }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
+    </style>
+</head>
+<body>
+
+    <div id="landscape-blocker">
+        <span>Portrait Mode Only.<br>Please rotate your device.</span>
+    </div>
+
+    <!-- Fixed Header -->
+    <header class="header">
+        <a href="index.html">
+            <img src="https://ik.imagekit.io/5lz94dan6e/Picsart_26-03-30_08-28-40-573.png?updatedAt=1774839553114" alt="Main Logo" draggable="false">
+        </a>
+    </header>
+
+    <main class="content-wrapper">
+        <!-- COMMAND MODULE -->
+        <div class="command-module">
+            <h1>Free Tournaments Rule</h1>
+            <h2>Don't miss any of it</h2>
+            
+            <div id="point-header-box" class="ph-box">
+                <h3 id="point-header">AWAITING SYSTEM...</h3>
+            </div>
+        </div>
+
+        <!-- ARENA (Image Background) -->
+        <div class="arena">
+
+            <!-- Fixed Numbered Timeline -->
+            <div class="timeline">
+                <div class="timeline-line">
+                    <div class="timeline-progress" id="timeline-progress"></div>
+                </div>
+                <div class="point" id="pt-1" onclick="showRule(1)">1</div>
+                <div class="point" id="pt-2" onclick="showRule(2)">2</div>
+                <div class="point" id="pt-3" onclick="showRule(3)">3</div>
+            </div>
+
+            <!-- Grey Rule Card w/ Character -->
+            <div id="rule-card" class="rule-card">
+                <div id="rule-load-bar" class="rule-load-bar"></div>
+                
+                <!-- Text Area -->
+                <div class="text-col">
+                    <div id="active-rule-text"></div>
+                </div>
+
+                <!-- Character Area -->
+                <div class="char-col">
+                    <img src="https://dl.dir.freefiremobile.com/common/web_event/official2.ff.garena.all/20229/a00504b94adddc82ae3ff2bfc53b568b.png" alt="Character" draggable="false">
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        /* === RESTRICTIONS ENFORCEMENT === */
+        document.addEventListener('contextmenu', event => event.preventDefault());
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'F12' || event.keyCode === 123) event.preventDefault();
+            if ((event.ctrlKey || event.metaKey) && event.shiftKey && (event.key === 'I' || event.key === 'i')) event.preventDefault();
+            if ((event.ctrlKey || event.metaKey) && event.shiftKey && (event.key === 'J' || event.key === 'j')) event.preventDefault();
+            if ((event.ctrlKey || event.metaKey) && (event.key === 'U' || event.key === 'u')) event.preventDefault();
+        });
+
+        /* === RULES DATA === */
+        const rulesData = {
+            1: {
+                header: "Follow Official Accounts",
+                text: `Participate karne ke liye mere sabhi official accounts ko follow karna compulsory hai.<br>
+                       <div class="social-buttons">
+                           <a href="https://www.instagram.com/dragon_tournament_?igsh=MW53dTN1bHBkMzE5OQ==" target="_blank" class="social-btn">
+                               <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+                               Instagram
+                           </a>
+                           <a href="https://youtube.com/@dragon_tournaments?si=ZcOBotZCgHCg5a-2" target="_blank" class="social-btn">
+                               <svg viewBox="0 0 24 24"><path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"/></svg>
+                               YouTube
+                           </a>
+                       </div>`
+            },
+            2: {
+                header: "Latest 5 Reel",
+                text: `Meri LATEST 5 REELS par Like, Comment on each reel and 1 reel need to be shared to story is compulsory. 
+                       <div class="disq-block">
+                           <span class="disq-title">DISQUALIFICATION:</span>
+                           Agar tum jeet gaye, to tumhara activity check kiya jayega. Dhyan rahe, Tournament room banne KE BAAD KIYE GAYE LIKE AUR COMMENT VALID NAHI HONGE. Agar tumhari activity match winning ke baad hui, to direct DISQUALIFICATION milegi.
+                       </div>`
+            },
+            3: {
+                header: "Public Account",
+                text: "Tumhara account PUBLIC hona chahiye. Private accounts tournament ke liye eligible nahi hain kyunki hum tumhari activity verify nahi kar payenge."
+            }
+        };
+
+        /* === INTERACTION LOGIC === */
+        let typingTimeout = null;
+        
+        const pointHeaderBox = document.getElementById('point-header-box');
+        const pointHeader = document.getElementById('point-header');
+        const ruleCard = document.getElementById('rule-card');
+        const ruleTextDisplay = document.getElementById('active-rule-text');
+        const timelineProgress = document.getElementById('timeline-progress');
+        const ruleLoadBar = document.getElementById('rule-load-bar');
+
+        function typeWriterHTML(element, htmlString, speed) {
+            clearTimeout(typingTimeout);
+            element.innerHTML = "";
+            let i = 0;
+            let currentHTML = "";
+
+            function type() {
+                if (i < htmlString.length) {
+                    if (htmlString[i] === '<') {
+                        let tag = "";
+                        while (htmlString[i] !== '>' && i < htmlString.length) {
+                            tag += htmlString[i]; i++;
+                        }
+                        tag += '>';
+                        currentHTML += tag;
+                        element.innerHTML = currentHTML + '<span class="typing-cursor"></span>';
+                        i++; type(); 
+                    } else {
+                        currentHTML += htmlString[i];
+                        element.innerHTML = currentHTML + '<span class="typing-cursor"></span>';
+                        i++;
+                        typingTimeout = setTimeout(type, speed);
+                    }
+                } else {
+                    element.innerHTML = currentHTML; 
+                }
+            }
+            type();
+        }
+
+        function showRule(pointId) {
+            if (navigator.vibrate) navigator.vibrate(40);
+
+            // Update Timeline
+            document.querySelectorAll('.point').forEach((pt, index) => {
+                pt.classList.remove('selected');
+                if (index + 1 <= pointId) pt.classList.add('selected');
+            });
+
+            const progressHeights = { 1: '0%', 2: '50%', 3: '100%' };
+            timelineProgress.style.height = progressHeights[pointId];
+
+            // Hide Card before updating
+            pointHeaderBox.classList.remove('active');
+            ruleCard.classList.remove('active');
+            ruleLoadBar.style.width = '0%'; 
+            clearTimeout(typingTimeout); 
+
+            setTimeout(() => {
+                // Update Text Content
+                pointHeader.innerHTML = rulesData[pointId].header;
+                ruleTextDisplay.innerHTML = ""; 
+                
+                // Show Card
+                pointHeaderBox.classList.add('active');
+                ruleCard.classList.add('active');
+
+                // Trigger Load & Type
+                setTimeout(() => {
+                    ruleLoadBar.style.width = '100%';
+                    setTimeout(() => {
+                        typeWriterHTML(ruleTextDisplay, rulesData[pointId].text, 12);
+                    }, 250);
+                }, 100);
+
+            }, 400); 
+        }
+
+        // Auto-start Point 1
+        window.onload = () => {
+            setTimeout(() => {
+                showRule(1);
+            }, 500);
+        };
+
+    </script>
+</body>
+</html>
